@@ -51,7 +51,7 @@ export default class SignIn extends React.Component {
             </Form>
 
             <Message>
-              New here? Sign Up
+              New here? <a href='#' onClick={this.props.signUpBtn}>Sign Up</a>
             </Message>
 
           </Grid.Column>
