@@ -5,6 +5,7 @@ import { Container } from 'semantic-ui-react';
 import Landing from './containers/Landing'
 import SignIn from './containers/SignIn'
 import SignUp from './components/SignUp'
+import UserProfile from './components/UserProfile'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -16,7 +17,8 @@ export default class App extends React.Component {
     user: null,
     products: [],
     search: '',
-    signup: false
+    signup: false,
+    update: false
   }
 
   componentDidMount(){
@@ -46,7 +48,7 @@ export default class App extends React.Component {
     }).then(resp => resp.json())
       .then(response => {
         if (response.error) {
-          toast('Signin Failed! Please try again.', {containerId: 'errors'})
+          toast.error('Signin Failed! Please try again.', {containerId: 'messages'})
         } else {
           this.setState({user: response.user}, localStorage.setItem('user', response.token))
         }
@@ -61,7 +63,7 @@ export default class App extends React.Component {
     }).then(resp => resp.json())
       .then(response => {
         if (response.error) {
-          response.error.map(err => toast(err, {containerId: 'errors'}))
+          response.error.map(err => toast.error(err, {containerId: 'messages'}))
         } else {
           this.setState({user: response.user}, localStorage.setItem('user', response.token))
         }
@@ -74,6 +76,10 @@ export default class App extends React.Component {
 
   signUpBtn = () => {
     this.setState({signup:true})
+  }
+  
+  updateBtn = () => {
+    this.setState({update:true})
   }
 
   setSearch = e => {
@@ -89,16 +95,37 @@ export default class App extends React.Component {
       return this.state.products
     }
   }
+
+  updateDetails = userDetails => {
+    fetch(API_BASE + `users/${this.state.user.id}`, {
+      method: 'PATCH',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(userDetails)
+    }).then(resp => resp.json())
+      .then(response => {
+        if (response.error) {
+          response.error.map(err => toast.error(err, {containerId: 'messages'}))
+        } else {
+          toast.success('Details updated.', {containerId: 'messages'})
+          this.setState({user: response, update: false})
+        }
+      })
+  }
   
   render(){
     return (
       <React.Fragment>
-        <ToastContainer containerId={'errors'} position={toast.POSITION.TOP_RIGHT} />
-        <NavBar user={this.state.user} signOut={this.signOut} setSearch={this.setSearch} search={this.state.search} />
+        <ToastContainer containerId={'messages'} position={toast.POSITION.BOTTOM_RIGHT} />
+        <NavBar user={this.state.user} updateBtn={this.updateBtn} signOut={this.signOut} setSearch={this.setSearch} search={this.state.search} />
         <Container style={{ paddingTop: '5em' }}>
           { this.state.user 
             ?
-              <Landing products={this.products()} search={this.state.search} />
+              ( this.state.update
+                  ?
+                    <UserProfile user={this.state.user} updateDetails={this.updateDetails}/>
+                  :
+                    <Landing products={this.products()} search={this.state.search} />
+              )
             : ( this.state.signup 
                 ?
                   <SignUp signUpSubmit={this.signUpSubmit} />

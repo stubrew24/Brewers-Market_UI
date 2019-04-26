@@ -19,7 +19,7 @@ export default class NavBar extends React.Component {
                             
                             <Dropdown item text={`${user.first_name} ${user.last_name}`}>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item>My Details</Dropdown.Item>
+                                    <Dropdown.Item onClick={this.props.updateBtn}>My Details</Dropdown.Item>
                                     <Dropdown.Item>Orders</Dropdown.Item>
                                     <Dropdown.Item>Help</Dropdown.Item>
                                     <Dropdown.Item onClick={this.props.signOut}>Sign out</Dropdown.Item>

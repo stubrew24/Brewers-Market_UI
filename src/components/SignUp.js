@@ -28,14 +28,14 @@ export default class SignUp extends React.Component {
     handleSubmit = e => { 
       let pass_error = true
       let dob_error = true
-      if (this.state.password != this.state.password_confirm) {
-        toast('Passwords do not match.', {containerId: 'errors'})
+      if (this.state.password !== this.state.password_confirm) {
+        toast.error('Passwords do not match.', {containerId: 'errors'})
         pass_error = true
       } else {
         pass_error = false
       }
       if (this.ageCheck(this.state.dob) < 18){
-        toast('You must be at least 18.', {containerId: 'errors'})
+        toast.error('You must be at least 18.', {containerId: 'errors'})
         dob_error = true
       } else {
         dob_error = false
