@@ -1,8 +1,8 @@
 import React from 'react'
 import { Grid, Header, Form, Button } from 'semantic-ui-react'
 import { DateInput } from 'semantic-ui-calendar-react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+import { API_BASE } from '../API'
 
 export default class SignUp extends React.Component {
 
@@ -41,8 +41,25 @@ export default class SignUp extends React.Component {
         dob_error = false
       }
       if (!dob_error && !pass_error){
-        this.props.signUpSubmit(this.state)
+        this.signUpSubmit()
       }
+    }
+
+    signUpSubmit = () => {
+      fetch(API_BASE + 'users', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(this.state)
+      }).then(resp => resp.json())
+        .then(response => {
+          if (response.error) {
+            response.error.map(err => toast.error(err, {containerId: 'messages'}))
+          } else {
+            localStorage.setItem('user', response.token)
+            this.props.getUser()
+            this.props.history.push('/')
+          }
+        })
     }
 
     formValidation = () => {
@@ -71,7 +88,6 @@ export default class SignUp extends React.Component {
     render(){
         return (
         <React.Fragment>
-        <ToastContainer containerId={'errors'} position={toast.POSITION.TOP_RIGHT} />
 
         <Grid textAlign='center'>
           <Grid.Column style={{ maxWidth: 450, paddingTop: '8em'}}>

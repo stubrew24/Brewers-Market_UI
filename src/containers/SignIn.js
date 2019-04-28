@@ -1,5 +1,8 @@
 import React from 'react'
 import { Grid, Header, Form, Message, Button } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify';
+import { API_BASE } from '../API'
 
 export default class SignIn extends React.Component {
 
@@ -8,14 +11,27 @@ export default class SignIn extends React.Component {
         password: ''
     }
 
-    handleOnChange = e => {
-        this.setState({
-            [e.target.name]: e.target.value 
-        })
-    }
+    handleOnChange = e => this.setState({ [e.target.name]: e.target.value })
 
     handleSubmit = e => {
         this.props.signInSubmit(this.state)
+    }
+
+    signInSubmit = () => {
+      fetch(API_BASE + 'signin',{
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(this.state)
+      }).then(resp => resp.json())
+        .then(response => {
+          if (response.error) {
+            toast.error('Signin Failed! Please try again.', {containerId: 'messages'})
+          } else {
+            localStorage.setItem('user', response.token)
+            this.props.getUser()
+            this.props.history.push('/') 
+          }
+        })
     }
 
     render(){
@@ -29,7 +45,7 @@ export default class SignIn extends React.Component {
               Sign in to your account
             </Header>
 
-            <Form size='large' onSubmit={this.handleSubmit}>
+            <Form size='large' onSubmit={this.signInSubmit}>
 
                 <Form.Input fluid icon='user' iconPosition='left' placeholder='E-mail address' name='email' onChange={this.handleOnChange} value={this.state.email} />
                 <Form.Input
@@ -51,7 +67,7 @@ export default class SignIn extends React.Component {
             </Form>
 
             <Message>
-              New here? <a href='#' onClick={this.props.signUpBtn}>Sign Up</a>
+              New here? <Link to={'/signup'} >Sign Up</Link>
             </Message>
 
           </Grid.Column>

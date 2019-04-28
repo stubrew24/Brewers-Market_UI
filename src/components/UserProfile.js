@@ -1,29 +1,56 @@
 import React from 'react'
 import { Grid, Header, Form, Button } from 'semantic-ui-react'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { DateInput } from 'semantic-ui-calendar-react'
+import { API_BASE } from '../API'
 
 export default class UserProfile extends React.Component {
 
     state = {
-        first_name: this.props.user.first_name,
-        last_name: this.props.user.last_name,
-        tel: this.props.user.tel,
-        address_line_1: this.props.user.address_line_1,
-        address_line_2: this.props.user.address_line_2,
-        city: this.props.user.city,
-        postcode: this.props.user.postcode
+        first_name: '',
+        last_name: '',
+        tel: '',
+        address_line_1: '',
+        address_line_2: '',
+        city: '',
+        postcode: '',
+        dob: '',
+        email: ''
     }
 
-    handleOnChange = e => {
-        this.setState({
-            [e.target.name]: e.target.value 
-        })
+    componentDidMount(){
+        
+        const token = localStorage.getItem('user')
+        if (token) {
+            fetch(API_BASE + 'auto_signin', {
+            headers: {'Authorization':token}
+            }).then(resp => resp.json())
+            .then(response => {
+                if (response.error) return
+                this.setState({...response.user})
+            })
+        } else {
+            this.props.history.push('/signin')
+        }
     }
 
-    handleSubmit = () => {
-        this.props.updateDetails(this.state)
-    }
+    updateDetails = () => {
+        fetch(API_BASE + `users/${this.state.id}`, {
+          method: 'PATCH',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(this.state)
+        }).then(resp => resp.json())
+          .then(response => {
+            if (response.error) {
+              response.error.map(err => toast.error(err, {containerId: 'messages'}))
+            } else {
+              toast.success('Details updated.', {containerId: 'messages'})
+              this.setState({user: response})
+            }
+          })
+      }
+
+    handleOnChange = e => this.setState({ [e.target.name]: e.target.value })
 
     formValidation = () => {
         const {first_name, last_name, tel, address_line_1, address_line_2, city, postcode} = this.state
@@ -36,9 +63,10 @@ export default class UserProfile extends React.Component {
 
     render(){
 
+        const {first_name, last_name, tel, address_line_1, address_line_2, city, postcode, email, dob} = this.state
+
         return (
             <React.Fragment>
-                <ToastContainer containerId={'errors'} position={toast.POSITION.TOP_RIGHT} />
 
                 <Grid textAlign='center'>
                 <Grid.Column style={{ maxWidth: 450, paddingTop: '8em'}}>
@@ -47,26 +75,23 @@ export default class UserProfile extends React.Component {
                         My Details
                     </Header>
 
-                    <Form size='large' onSubmit={this.handleSubmit}>
-                        <Form.Input fluid required icon='user' iconPosition='left' placeholder='First Name' name='first_name' onChange={this.handleOnChange} value={this.state.first_name} />
-                        <Form.Input fluid required icon='user' iconPosition='left' placeholder='Last Name' name='last_name' onChange={this.handleOnChange} value={this.state.last_name} />
+                    <Form size='large' onSubmit={this.updateDetails}>
+                        <Form.Input fluid required icon='user' iconPosition='left' placeholder='First Name' name='first_name' onChange={this.handleOnChange} value={first_name} />
+                        <Form.Input fluid required icon='user' iconPosition='left' placeholder='Last Name' name='last_name' onChange={this.handleOnChange} value={last_name} />
                 
-                        <Form.Input fluid required disabled icon='mail' iconPosition='left' placeholder='E-mail address' name='email' onChange={this.handleOnChange} value={this.props.user.email} />
+                        <Form.Input fluid required disabled icon='mail' iconPosition='left' placeholder='E-mail address' name='email' onChange={this.handleOnChange} value={email} />
                 
                         <DateInput
-                        disabled
-                        name="dob"
-                        placeholder="Date of Birth"
-                        value={this.props.user.dob}
-                        iconPosition="left"
-                        onChange={this.handleDateChange}
+                            disabled
+                            value={dob}
+                            iconPosition="left"
                         />
 
-                        <Form.Input fluid required icon='phone' iconPosition='left' placeholder='Phone No.' name='tel' onChange={this.handleOnChange} value={this.state.tel} />
-                        <Form.Input fluid required icon='address book' iconPosition='left' placeholder='Address Line 1' name='address_line_1' onChange={this.handleOnChange} value={this.state.address_line_1} />
-                        <Form.Input fluid required icon='address book' iconPosition='left' placeholder='Address Line 2' name='address_line_2' onChange={this.handleOnChange} value={this.state.address_line_2} />
-                        <Form.Input fluid required icon='address book' iconPosition='left' placeholder='City' name='city' onChange={this.handleOnChange} value={this.state.city} />
-                        <Form.Input fluid required icon='address book' iconPosition='left' placeholder='Postcode' name='postcode' onChange={this.handleOnChange} value={this.state.postcode} />
+                        <Form.Input fluid required icon='phone' iconPosition='left' placeholder='Phone No.' name='tel' onChange={this.handleOnChange} value={tel} />
+                        <Form.Input fluid required icon='address book' iconPosition='left' placeholder='Address Line 1' name='address_line_1' onChange={this.handleOnChange} value={address_line_1} />
+                        <Form.Input fluid required icon='address book' iconPosition='left' placeholder='Address Line 2' name='address_line_2' onChange={this.handleOnChange} value={address_line_2} />
+                        <Form.Input fluid required icon='address book' iconPosition='left' placeholder='City' name='city' onChange={this.handleOnChange} value={city} />
+                        <Form.Input fluid required icon='address book' iconPosition='left' placeholder='Postcode' name='postcode' onChange={this.handleOnChange} value={postcode} />
                 
                         {this.formValidation()
                             ? 

@@ -1,15 +1,16 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { Card, Image, Header } from 'semantic-ui-react'
 
 export default class ProductCard extends React.Component{
     render(){
-        const {brewery, name, style, image_url} = this.props.beer
+        const {id, brewery, name, style, image_url} = this.props.beer
         return (
-            <Card>
-                <Image src={image_url} />
+            <Card as={Link} to={`/product/${id}`} onClick={() => this.props.fetchProduct(id)} >
+                <Image src={image_url}/>
                 <Card.Content>
-                    <Header>{brewery.name}</Header>
-                    <p>{name}</p>
+                    <Header>{name}</Header>
+                    <p>{brewery.name}</p>
                 </Card.Content>
                 <Card.Content extra>
                     {style}

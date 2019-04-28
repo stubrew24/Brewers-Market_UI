@@ -6,23 +6,45 @@ import Landing from './containers/Landing'
 import SignIn from './containers/SignIn'
 import SignUp from './components/SignUp'
 import UserProfile from './components/UserProfile'
+import Products from './containers/Products'
+import ProductPage from './components/ProductPage'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-const API_BASE = 'http://localhost:3000/api/v1/'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { API_BASE } from './API'
+import Cart from './components/Cart';
 
 export default class App extends React.Component {
 
   state = {
     user: null,
     products: [],
-    search: '',
-    signup: false,
-    update: false
+    filter: {
+      type: null,
+      value: null
+    },
+    cart: {}
   }
 
   componentDidMount(){
 
+    this.getUser()
+    this.getCart()
+
+    fetch(API_BASE + 'products')
+      .then(resp => resp.json())
+      .then(products => this.setState({products}))
+  }
+
+  getCart = () => {
+    const cart = localStorage.getItem('cart')
+    if (cart){
+      const cartObj = JSON.parse(cart)
+      this.setState({cart: cartObj})
+    }
+  }
+
+  getUser = () => {
     const token = localStorage.getItem('user')
     if (token) {
       fetch(API_BASE + 'auto_signin', {
@@ -33,108 +55,64 @@ export default class App extends React.Component {
           this.setState({user: response.user})
         })
     }
-
-    fetch(API_BASE + 'products')
-      .then(resp => resp.json())
-      .then(products => this.setState({products}))
-  }
-
-  
-  signInSubmit = user => {
-    fetch(API_BASE + 'signin',{
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(user)
-    }).then(resp => resp.json())
-      .then(response => {
-        if (response.error) {
-          toast.error('Signin Failed! Please try again.', {containerId: 'messages'})
-        } else {
-          this.setState({user: response.user}, localStorage.setItem('user', response.token))
-        }
-      })
-  }
-
-  signUpSubmit = newUser => {
-    fetch(API_BASE + 'users', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(newUser)
-    }).then(resp => resp.json())
-      .then(response => {
-        if (response.error) {
-          response.error.map(err => toast.error(err, {containerId: 'messages'}))
-        } else {
-          this.setState({user: response.user}, localStorage.setItem('user', response.token))
-        }
-      })
   }
 
   signOut = () => {
-    this.setState({user:null, signup:false},localStorage.removeItem('user'))
-  }
-
-  signUpBtn = () => {
-    this.setState({signup:true})
-  }
-  
-  updateBtn = () => {
-    this.setState({update:true})
+    this.setState({user:null},localStorage.removeItem('user'))
   }
 
   setSearch = e => {
+    this.setState({filter:{type: 'search', value: e.target.value}})
+  }
+
+  setFilter = (type, value) => {
+    this.setState({filter:{type, value}})
+  }
+
+  addToCart = (id) => {
     this.setState({
-      search: e.target.value
-    })
+      cart: Object.assign({}, this.state.cart, {
+        [id]: this.state.cart[id] + 1 || 1
+      })
+    }, () => localStorage.setItem('cart', JSON.stringify(this.state.cart)))
   }
 
   products = () => {
-    if (this.state.search){
-      return this.state.products.filter(product => product.brewery.name.toLowerCase().includes(this.state.search.toLowerCase()))
-    } else {
-      return this.state.products
+    const {products, filter} = this.state
+    switch(filter.type){
+      case 'search':
+        return products.filter(product => product.brewery.name.toLowerCase().includes(filter.value.toLowerCase()))
+      case 'all products':
+        return products
+      case 'brewery':
+        return products.filter(product => product.brewery.name === filter.value)
+      case 'style':
+        return products.filter(product => product.style.includes(filter.value))
+      default:
+        return products
     }
-  }
-
-  updateDetails = userDetails => {
-    fetch(API_BASE + `users/${this.state.user.id}`, {
-      method: 'PATCH',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(userDetails)
-    }).then(resp => resp.json())
-      .then(response => {
-        if (response.error) {
-          response.error.map(err => toast.error(err, {containerId: 'messages'}))
-        } else {
-          toast.success('Details updated.', {containerId: 'messages'})
-          this.setState({user: response, update: false})
-        }
-      })
   }
   
   render(){
     return (
-      <React.Fragment>
-        <ToastContainer containerId={'messages'} position={toast.POSITION.BOTTOM_RIGHT} />
-        <NavBar user={this.state.user} updateBtn={this.updateBtn} signOut={this.signOut} setSearch={this.setSearch} search={this.state.search} />
-        <Container style={{ paddingTop: '5em' }}>
-          { this.state.user 
-            ?
-              ( this.state.update
-                  ?
-                    <UserProfile user={this.state.user} updateDetails={this.updateDetails}/>
-                  :
-                    <Landing products={this.products()} search={this.state.search} />
-              )
-            : ( this.state.signup 
-                ?
-                  <SignUp signUpSubmit={this.signUpSubmit} />
-                : 
-                  <SignIn signInSubmit={this.signInSubmit} signUpBtn={this.signUpBtn} />
-              )
-          }
-        </Container>
-      </React.Fragment>
+      <Router>
+        <React.Fragment>
+          <ToastContainer containerId={'messages'} position={toast.POSITION.BOTTOM_RIGHT} />
+
+          <NavBar user={this.state.user} signOut={this.signOut} setSearch={this.setSearch} search={this.state.filter.type === 'serach' ? this.state.filter.value : ''} cart={this.state.cart} />
+          
+          <Container style={{ paddingTop: '6em' }}>
+            <Route exact path="/" render={ () => <Landing products={this.products()} filter={this.state.filter.value} setFilter={this.setFilter} />} />
+            <Route exact path="/profile" render={ routerProps => <UserProfile {...routerProps} />} />
+            <Route exact path="/signup" render={ routerProps => <SignUp getUser={this.getUser} {...routerProps} />} />
+            <Route exact path="/signin" render={ routerProps => <SignIn getUser={this.getUser} {...routerProps} />} />
+            <Route exact path="/products" render={ routerProps => <Products {...routerProps} />} />
+            <Route exact path="/product/:id" render={ routerProps => <ProductPage {...routerProps} products={this.state.products} addToCart={this.addToCart} />} />
+            <Route exact path="/cart" render={ routerProps => <Cart {...routerProps} cart={this.state.cart} />} />
+          </Container>
+          
+        </React.Fragment>
+      </Router>
     )
   }
 }

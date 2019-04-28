@@ -7,15 +7,15 @@ export default class Landing extends React.Component {
   render(){
     return (
         <React.Fragment>
-          <Hero /> 
+          <Hero setFilter={this.props.setFilter} /> 
             {
-              this.props.search
+              this.props.filter
               ?
-                <CardBar title="Search Results" products={this.props.products} />
+                <CardBar title={this.props.filter} products={this.props.products} fetchProduct={()=>{}} />
               :
                 <React.Fragment>
-                  <CardBar title="Trending Products" products={this.props.products.slice(0,5)} />
-                  <CardBar title="Latest Products" products={this.props.products.reverse().slice(0,5)} />
+                  <CardBar title="Trending Products" products={this.props.products.slice(0,5)} fetchProduct={()=>{}}  />
+                  <CardBar title="Latest Products" products={this.props.products.reverse().slice(0,5)} fetchProduct={()=>{}}  />
                 </React.Fragment>
             }
         </React.Fragment>

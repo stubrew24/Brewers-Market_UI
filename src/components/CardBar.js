@@ -11,7 +11,7 @@ export default class CardBar extends React.Component {
                 {this.props.products.length > 0 
                     ?
                         <Card.Group itemsPerRow={5}>
-                            {this.props.products.map(product => <ProductCard key={product.id} beer={product}/> )}
+                            {this.props.products.map(product => <ProductCard key={product.id} beer={product} fetchProduct={this.props.fetchProduct}/> )}
                         </Card.Group>
                     :
                         <div>No results found.</div>
