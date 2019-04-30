@@ -37,8 +37,12 @@ export default class ProductPage extends React.Component {
     }
 
     handleAddToCart = () => {
-        this.props.addToCart(this.state.id)
-        toast.success('Added to cart.', {containerId: 'messages'})
+        if (this.props.cart[this.state.id] >= this.state.stock){
+            toast.error('Stock level exceeded.', {containerId: 'messages'}) 
+        } else {
+            this.props.addToCart(this.state.id)
+            toast.success('Added to cart.', {containerId: 'messages'}) 
+        }
     }
 
     render() {

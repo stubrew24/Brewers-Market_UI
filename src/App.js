@@ -13,6 +13,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { API_BASE } from './API'
 import Cart from './components/Cart';
+import Order from './components/Order'
+import Orders from './components/Orders'
 
 export default class App extends React.Component {
 
@@ -33,7 +35,10 @@ export default class App extends React.Component {
 
     fetch(API_BASE + 'products')
       .then(resp => resp.json())
-      .then(products => this.setState({products}))
+      .then(products => {
+        const instock = products.filter(product => product.stock > 0)
+        this.setState({products: instock})
+      })
   }
 
   getCart = () => {
@@ -42,6 +47,10 @@ export default class App extends React.Component {
       const cartObj = JSON.parse(cart)
       this.setState({cart: cartObj})
     }
+  }
+
+  clearCart = () => {
+    this.setState({ cart: {} })
   }
 
   getUser = () => {
@@ -77,8 +86,32 @@ export default class App extends React.Component {
     }, () => localStorage.setItem('cart', JSON.stringify(this.state.cart)))
   }
 
+  removeFromCart = (id) => {
+    const newCart = {...this.state.cart}
+    if (this.state.cart[id] > 1){
+      newCart[id] = this.state.cart[id] - 1
+    } else {
+      delete newCart[id]
+    }
+    
+    this.setState({
+      cart: newCart
+    }, () => localStorage.setItem('cart', JSON.stringify(this.state.cart)))
+  }
+
+  updateCart = e => {
+    console.log(e.target.name, e.target.value)
+    this.setState({
+        cart: Object.assign({}, this.state.cart, {
+          [e.target.name]: e.target.value
+        })
+    }, () => localStorage.setItem('cart', JSON.stringify(this.state.cart)))
+
+  }
+
   products = () => {
     const {products, filter} = this.state
+
     switch(filter.type){
       case 'search':
         return products.filter(product => product.brewery.name.toLowerCase().includes(filter.value.toLowerCase()))
@@ -95,6 +128,7 @@ export default class App extends React.Component {
   
   render(){
     return (
+
       <Router>
         <React.Fragment>
           <ToastContainer containerId={'messages'} position={toast.POSITION.BOTTOM_RIGHT} />
@@ -104,11 +138,13 @@ export default class App extends React.Component {
           <Container style={{ paddingTop: '6em' }}>
             <Route exact path="/" render={ () => <Landing products={this.products()} filter={this.state.filter.value} setFilter={this.setFilter} />} />
             <Route exact path="/profile" render={ routerProps => <UserProfile {...routerProps} />} />
+            <Route exact path="/orders" render={ routerProps => <Orders {...routerProps} />} />
+            <Route exact path="/order/:id" render={ routerProps => <Order {...routerProps} />} />
             <Route exact path="/signup" render={ routerProps => <SignUp getUser={this.getUser} {...routerProps} />} />
             <Route exact path="/signin" render={ routerProps => <SignIn getUser={this.getUser} {...routerProps} />} />
             <Route exact path="/products" render={ routerProps => <Products {...routerProps} />} />
-            <Route exact path="/product/:id" render={ routerProps => <ProductPage {...routerProps} products={this.state.products} addToCart={this.addToCart} />} />
-            <Route exact path="/cart" render={ routerProps => <Cart {...routerProps} cart={this.state.cart} />} />
+            <Route exact path="/product/:id" render={ routerProps => <ProductPage {...routerProps} products={this.state.products} addToCart={this.addToCart} cart={this.state.cart} />} />
+            <Route exact path="/cart" render={ routerProps => <Cart {...routerProps} user={this.state.user} cart={this.state.cart } products={this.products()} clearCart={this.clearCart} removeFromCart={this.removeFromCart} addToCart={this.addToCart} />} />
           </Container>
           
         </React.Fragment>
