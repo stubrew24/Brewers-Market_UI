@@ -37,7 +37,7 @@ class CheckoutForm extends React.Component {
             fetch(API_BASE + 'orders', {
                 method: 'POST',
                 headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({cart:cart, user_id: this.props.user.id, order_total: 69})
+                body: JSON.stringify({cart:cart, user_id: this.props.user.id, order_total: this.props.total})
             })
                     .then(resp => resp.json())
                     .then(response => {
@@ -46,8 +46,8 @@ class CheckoutForm extends React.Component {
                         } else {
                             localStorage.removeItem('cart')
                             this.props.clearCart()
-                            this.setState({complete: true})
-                        }
+                            this.props.history.push(`/order/${response.id}`)
+                        }   
                     })
         }   
     }

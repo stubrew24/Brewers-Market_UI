@@ -10,7 +10,7 @@ export default class Checkout extends React.Component {
             <StripeProvider apiKey="pk_test_TYooMQauvdEDq54NiTphI7jx">
                 <div className="example">
                     <Elements>
-                        <CheckoutForm cart={this.props.cart} clearCart={this.props.clearCart} user={this.props.user} />
+                        <CheckoutForm cart={this.props.cart} clearCart={this.props.clearCart} user={this.props.user} history={this.props.history} total={this.props.total} />
                     </Elements>
                 </div>
             </StripeProvider>

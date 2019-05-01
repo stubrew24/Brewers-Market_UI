@@ -53,6 +53,8 @@ export default class Cart extends React.Component {
     updateCart = (action, id) => {
        if (action === 'add') {this.props.addToCart(id)}
        if (action === 'remove') {this.props.removeFromCart(id)}
+       if (action === 'removeline') {this.props.removeLineFromCart(id)}
+
        this.cartToState()
     }
 
@@ -82,7 +84,7 @@ export default class Cart extends React.Component {
                                                 <Link to={'#'} onClick={() => this.updateCart('add', item.id)}> <Icon name={'plus'} /> </Link>
                                             </Table.Cell>
                                             <Table.Cell>£{(item.total).toFixed(2)}</Table.Cell>
-                                            <Table.Cell><Link to={'#'} style={{color:'red'}} onClick={() => this.removeFromCart(item.id)}>Remove</Link></Table.Cell>
+                                            <Table.Cell><Link to={'#'} style={{color:'red'}} onClick={() => this.updateCart('removeline', item.id)}>Remove</Link></Table.Cell>
                                         </Table.Row>
                                 )
                             })
@@ -101,14 +103,14 @@ export default class Cart extends React.Component {
                     <Table.Footer fullWidth>
                         <Table.Row>
                             <Table.HeaderCell colSpan='4'>
-                                <Modal trigger={<Button positive floated={'right'}>Checkout</Button>}>
+                                <Modal trigger={<Button positive floated={'right'} style={{height:'2.8em'}}>Checkout</Button>}>
                                     <Modal.Header>Complete Purchase</Modal.Header>
                                     <Modal.Content>
-                                        <Checkout cart={this.state.cartItems} clearCart={this.props.clearCart} user={this.props.user} />
+                                        <Checkout cart={this.state.cartItems} clearCart={this.props.clearCart} user={this.props.user} history={this.props.history} total={this.sumTotal(6.99)}/>
                                     </Modal.Content>
                                 </Modal>
 
-                                <Button negative floated={'right'} onClick={this.props.clearCart} as={Link} to={'/'}>Empty Cart</Button>
+                                <Button negative floated={'right'} onClick={this.props.clearCart} as={Link} to={'/'} style={{height:'2.8em'}}>Empty Cart</Button>
                             </Table.HeaderCell>
                         </Table.Row>
                     </Table.Footer>

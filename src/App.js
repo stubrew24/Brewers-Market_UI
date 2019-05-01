@@ -15,6 +15,7 @@ import { API_BASE } from './API'
 import Cart from './components/Cart';
 import Order from './components/Order'
 import Orders from './components/Orders'
+import Help from './components/Help'
 
 export default class App extends React.Component {
 
@@ -99,6 +100,15 @@ export default class App extends React.Component {
     }, () => localStorage.setItem('cart', JSON.stringify(this.state.cart)))
   }
 
+  removeLineFromCart = (id) => {
+    const newCart = {...this.state.cart}
+    delete newCart[id]
+    
+    this.setState({
+      cart: newCart
+    }, () => localStorage.setItem('cart', JSON.stringify(this.state.cart)))
+  }
+
   updateCart = e => {
     console.log(e.target.name, e.target.value)
     this.setState({
@@ -150,7 +160,8 @@ export default class App extends React.Component {
               <Route exact path="/signin" render={ routerProps => <SignIn getUser={this.getUser} {...routerProps} />} />
               <Route exact path="/products" render={ routerProps => <Products {...routerProps} />} />
               <Route exact path="/product/:id" render={ routerProps => <ProductPage {...routerProps} products={this.state.products} addToCart={this.addToCart} cart={this.state.cart} />} />
-              <Route exact path="/cart" render={ routerProps => <Cart {...routerProps} user={this.state.user} cart={this.state.cart } products={this.products()} clearCart={this.clearCart} removeFromCart={this.removeFromCart} addToCart={this.addToCart} />} />
+              <Route exact path="/cart" render={ routerProps => <Cart {...routerProps} user={this.state.user} cart={this.state.cart } products={this.products()} clearCart={this.clearCart} removeFromCart={this.removeFromCart} addToCart={this.addToCart} removeLineFromCart={this.removeLineFromCart} />} />
+              <Route exact path='/help' render={ routerProps => <Help {...routerProps} /> } />
             </Container>
           }
           
