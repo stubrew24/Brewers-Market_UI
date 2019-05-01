@@ -1,20 +1,25 @@
 import React from 'react';
 import './App.css';
 import NavBar from './components/NavBar'
-import { Container } from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react'
 import Landing from './containers/Landing'
 import SignIn from './containers/SignIn'
 import SignUp from './components/SignUp'
 import UserProfile from './components/UserProfile'
 import Products from './containers/Products'
 import ProductPage from './components/ProductPage'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { API_BASE } from './API'
-import Cart from './components/Cart';
+import Cart from './components/Cart'
 import Order from './components/Order'
 import Orders from './components/Orders'
+import BrewerySale from './components/BrewerySale'
+import BrewerySales from './components/BrewerySales'
+import BreweryProfile from './components/BreweryProfile'
+import BreweryProduct from './components/BreweryProduct'
+import BreweryProducts from './components/BreweryProducts'
 import Help from './components/Help'
 
 export default class App extends React.Component {
@@ -160,6 +165,17 @@ export default class App extends React.Component {
               <Route exact path="/product/:id" render={ routerProps => <ProductPage {...routerProps} products={this.state.products} addToCart={this.addToCart} cart={this.state.cart} />} />
               <Route exact path="/cart" render={ routerProps => <Cart {...routerProps} user={this.state.user} cart={this.state.cart } products={this.products()} clearCart={this.clearCart} removeFromCart={this.removeFromCart} addToCart={this.addToCart} removeLineFromCart={this.removeLineFromCart} />} />
               <Route exact path='/help' render={ routerProps => <Help {...routerProps} /> } />
+              {
+                this.state.user.brewery &&
+                <React.Fragment>
+                  <Route exact path="/brewery/profile" render={ routerProps => <BreweryProfile {...routerProps} brewery={this.state.user.brewery} getUser={this.getUser} />} />
+                  <Route exact path="/brewery/sales" render={ routerProps => <BrewerySales {...routerProps} />} />
+                  <Route exact path="/brewery/sales/:id" render={ routerProps => <BrewerySale {...routerProps} />} />
+                  <Route exact path="/brewery/products" render={ routerProps => <BreweryProducts {...routerProps} />} />
+                  <Route exact path="/brewery/products/:id" render={ routerProps => <BreweryProduct {...routerProps} />} />
+                </React.Fragment>
+              
+              }
             </Container>
             :
             <Container style={{ paddingTop: '6em' }}>

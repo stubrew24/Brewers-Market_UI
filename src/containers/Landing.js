@@ -15,7 +15,7 @@ export default class Landing extends React.Component {
               :
                 <React.Fragment>
                   <CardBar title="Trending Products" products={this.props.products.slice(0,5)} fetchProduct={()=>{}}  />
-                  <CardBar title="Latest Products" products={this.props.products.reverse().slice(0,5)} fetchProduct={()=>{}}  />
+                  <CardBar title="Latest Products" products={[...this.props.products].reverse().slice(0,5)} fetchProduct={()=>{}}  />
                 </React.Fragment>
             }
         </React.Fragment>

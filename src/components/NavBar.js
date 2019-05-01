@@ -22,13 +22,26 @@ export default class NavBar extends React.Component {
                                 <Menu.Item as={Link} to={'/cart'} >
                                     <Icon name='cart' /><strong>{Object.keys(this.props.cart).length}</strong>
                                 </Menu.Item>
+
+                                {
+                                    user.brewery && 
+                                    <Dropdown item text={user.brewery.name}>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item as={Link} to={'/brewery/profile'}>Brewery Details</Dropdown.Item>
+                                            <Dropdown.Item as={Link} to={'/brewery/sales'}>Manage Sales</Dropdown.Item>
+                                            <Dropdown.Item as={Link} to={'/brewery/products'}>Manage Products</Dropdown.Item>
+                                            <Dropdown.Item as={Link} to={'/help'}>Help</Dropdown.Item>
+                                            <Dropdown.Item onClick={this.props.signOut} as={Link} to={'/'} >Sign Out</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                }
                                 
                                 <Dropdown item text={`${user.first_name} ${user.last_name}`}>
                                     <Dropdown.Menu>
                                         <Dropdown.Item as={Link} to={'/profile'} >My Details</Dropdown.Item>
                                         <Dropdown.Item as={Link} to={'/orders'}>Orders</Dropdown.Item>
                                         <Dropdown.Item as={Link} to={'/help'}>Help</Dropdown.Item>
-                                        <Dropdown.Item onClick={this.props.signOut} as={Link} to={'/'} >Sign out</Dropdown.Item>
+                                        <Dropdown.Item onClick={this.props.signOut} as={Link} to={'/'} >Sign Out</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </Menu.Menu> 
