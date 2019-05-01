@@ -3,6 +3,7 @@ import { Table, Button, Header, Modal, Card, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import Checkout from './Checkout';
 import {API_BASE} from '../API'
+import { toast } from 'react-toastify';
 
 
 export default class Cart extends React.Component {
@@ -51,7 +52,17 @@ export default class Cart extends React.Component {
     }
 
     updateCart = (action, id) => {
-       if (action === 'add') {this.props.addToCart(id)}
+       if (action === 'add') {
+            const product = this.state.products.find(product => {
+               return product.id === id
+            })
+            console.log(this.props.cart[id], product.stock)
+            if (this.props.cart[id] < product.stock) {
+                this.props.addToCart(id)
+            } else {
+                toast.error('Stock level reached.', {containerId: 'messages'})
+            } 
+        }
        if (action === 'remove') {this.props.removeFromCart(id)}
        if (action === 'removeline') {this.props.removeLineFromCart(id)}
 

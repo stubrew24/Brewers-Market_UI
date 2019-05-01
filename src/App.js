@@ -150,18 +150,21 @@ export default class App extends React.Component {
           <NavBar user={this.state.user} signOut={this.signOut} setSearch={this.setSearch} search={this.state.filter.type === 'search' ? this.state.filter.value : ''} cart={this.state.cart} />
           
           {
-            this.state.user &&
+            this.state.user ?
             <Container style={{ paddingTop: '6em' }}>
               <Route exact path="/" render={ () => <Landing products={this.products()} filter={this.state.filter.value} setFilter={this.setFilter} />} />
               <Route exact path="/profile" render={ routerProps => <UserProfile {...routerProps} />} />
               <Route exact path="/orders" render={ routerProps => <Orders {...routerProps} user={this.state.user} />} />
               <Route exact path="/order/:id" render={ routerProps => <Order {...routerProps} />} />
-              <Route exact path="/signup" render={ routerProps => <SignUp getUser={this.getUser} {...routerProps} />} />
-              <Route exact path="/signin" render={ routerProps => <SignIn getUser={this.getUser} {...routerProps} />} />
               <Route exact path="/products" render={ routerProps => <Products {...routerProps} />} />
               <Route exact path="/product/:id" render={ routerProps => <ProductPage {...routerProps} products={this.state.products} addToCart={this.addToCart} cart={this.state.cart} />} />
               <Route exact path="/cart" render={ routerProps => <Cart {...routerProps} user={this.state.user} cart={this.state.cart } products={this.products()} clearCart={this.clearCart} removeFromCart={this.removeFromCart} addToCart={this.addToCart} removeLineFromCart={this.removeLineFromCart} />} />
               <Route exact path='/help' render={ routerProps => <Help {...routerProps} /> } />
+            </Container>
+            :
+            <Container style={{ paddingTop: '6em' }}>
+              <Route exact path="/signup" render={ routerProps => <SignUp getUser={this.getUser} {...routerProps} />} />
+              <Route exact path="/signin" render={ routerProps => <SignIn getUser={this.getUser} {...routerProps} />} />
             </Container>
           }
           
