@@ -28,7 +28,6 @@ export default class NavBar extends React.Component {
                                     <Dropdown item text={user.brewery.name}>
                                         <Dropdown.Menu>
                                             <Dropdown.Item as={Link} to={'/brewery/profile'}>Brewery Details</Dropdown.Item>
-                                            <Dropdown.Item as={Link} to={'/brewery/sales'}>Manage Sales</Dropdown.Item>
                                             <Dropdown.Item as={Link} to={'/brewery/products'}>Manage Products</Dropdown.Item>
                                             <Dropdown.Item as={Link} to={'/help'}>Help</Dropdown.Item>
                                             <Dropdown.Item onClick={this.props.signOut} as={Link} to={'/'} >Sign Out</Dropdown.Item>

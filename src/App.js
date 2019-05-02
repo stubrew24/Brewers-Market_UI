@@ -15,8 +15,6 @@ import { API_BASE } from './API'
 import Cart from './components/Cart'
 import Order from './components/Order'
 import Orders from './components/Orders'
-import BrewerySale from './components/BrewerySale'
-import BrewerySales from './components/BrewerySales'
 import BreweryProfile from './components/BreweryProfile'
 import BreweryProduct from './components/BreweryProduct'
 import BreweryProducts from './components/BreweryProducts'
@@ -169,10 +167,8 @@ export default class App extends React.Component {
                 this.state.user.brewery &&
                 <React.Fragment>
                   <Route exact path="/brewery/profile" render={ routerProps => <BreweryProfile {...routerProps} brewery={this.state.user.brewery} getUser={this.getUser} />} />
-                  <Route exact path="/brewery/sales" render={ routerProps => <BrewerySales {...routerProps} />} />
-                  <Route exact path="/brewery/sales/:id" render={ routerProps => <BrewerySale {...routerProps} />} />
-                  <Route exact path="/brewery/products" render={ routerProps => <BreweryProducts {...routerProps} />} />
-                  <Route exact path="/brewery/products/:id" render={ routerProps => <BreweryProduct {...routerProps} />} />
+                  <Route exact path="/brewery/products" render={ routerProps => <BreweryProducts {...routerProps} brewery={this.state.user.brewery}  />} />
+                  <Route exact path="/brewery/products/:id" render={ routerProps => <BreweryProduct {...routerProps} getUser={this.getUser} />} />
                 </React.Fragment>
               
               }

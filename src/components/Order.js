@@ -86,7 +86,7 @@ export default class Orders extends React.Component {
                         </Item>
                         {products.map(product => {
                             return (
-                                <Item style={{paddingTop:'2em'}}>
+                                <Item style={{paddingTop:'2em'}} key={product.id}>
                                     <Item.Image size='tiny' src={product.image_url} />
                                     <Item.Content>
                                         <Item.Header>{product.name}</Item.Header>
