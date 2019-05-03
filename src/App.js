@@ -18,7 +18,9 @@ import Orders from './components/Orders'
 import BreweryProfile from './components/BreweryProfile'
 import BreweryProduct from './components/BreweryProduct'
 import BreweryProducts from './components/BreweryProducts'
+import BreweryNewProduct from './components/BreweryNewProduct'
 import Help from './components/Help'
+import Review from './components/Review'
 
 export default class App extends React.Component {
 
@@ -36,13 +38,8 @@ export default class App extends React.Component {
 
     this.getUser()
     this.getCart()
+    this.getProducts()
 
-    fetch(API_BASE + 'products')
-      .then(resp => resp.json())
-      .then(products => {
-        const instock = products.filter(product => product.stock > 0)
-        this.setState({products: instock})
-      })
   }
 
   getCart = () => {
@@ -51,6 +48,15 @@ export default class App extends React.Component {
       const cartObj = JSON.parse(cart)
       this.setState({cart: cartObj})
     }
+  }
+
+  getProducts = () => {
+    fetch(API_BASE + 'products')
+      .then(resp => resp.json())
+      .then(products => {
+        const instock = products.filter(product => product.stock > 0)
+        this.setState({products: instock})
+      })
   }
 
   clearCart = () => {
@@ -160,15 +166,17 @@ export default class App extends React.Component {
               <Route exact path="/orders" render={ routerProps => <Orders {...routerProps} user={this.state.user} />} />
               <Route exact path="/order/:id" render={ routerProps => <Order {...routerProps} />} />
               <Route exact path="/products" render={ routerProps => <Products {...routerProps} />} />
-              <Route exact path="/product/:id" render={ routerProps => <ProductPage {...routerProps} products={this.state.products} addToCart={this.addToCart} cart={this.state.cart} />} />
+              <Route exact path="/product/:id" render={ routerProps => <ProductPage {...routerProps} products={this.state.products} addToCart={this.addToCart} cart={this.state.cart} user={this.state.user} getUser={this.getProducts} />} />
               <Route exact path="/cart" render={ routerProps => <Cart {...routerProps} user={this.state.user} cart={this.state.cart } products={this.products()} clearCart={this.clearCart} removeFromCart={this.removeFromCart} addToCart={this.addToCart} removeLineFromCart={this.removeLineFromCart} />} />
               <Route exact path='/help' render={ routerProps => <Help {...routerProps} /> } />
+              <Route exact path='/reviews/:id' render={ routerProps => <Review {...routerProps} user={this.state.user}/> } />
               {
                 this.state.user.brewery &&
                 <React.Fragment>
-                  <Route exact path="/brewery/profile" render={ routerProps => <BreweryProfile {...routerProps} brewery={this.state.user.brewery} getUser={this.getUser} />} />
+                  <Route exact path="/brewery/profile" render={ routerProps => <BreweryProfile {...routerProps} brewery={this.state.user.brewery} getUser={this.getProducts} />} />
                   <Route exact path="/brewery/products" render={ routerProps => <BreweryProducts {...routerProps} brewery={this.state.user.brewery}  />} />
-                  <Route exact path="/brewery/products/:id" render={ routerProps => <BreweryProduct {...routerProps} getUser={this.getUser} />} />
+                  <Route exact path="/brewery/newproduct" render={ routerProps => <BreweryNewProduct {...routerProps} brewery={this.state.user.brewery} getUser={this.getProducts} />} />
+                  <Route exact path="/brewery/products/:id" render={ routerProps => <BreweryProduct {...routerProps} getUser={this.getProducts} />} />
                 </React.Fragment>
               
               }

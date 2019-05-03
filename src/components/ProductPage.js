@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Button, Image, Grid, List, Header } from 'semantic-ui-react'
+import { Card, Button, Image, Grid, List, Header, Segment, Item, Rating } from 'semantic-ui-react'
 import CardBar from './CardBar'
 import { API_BASE } from '../API';
 import { toast } from 'react-toastify';
@@ -17,7 +17,9 @@ export default class ProductPage extends React.Component {
         price: 0, 
         stock: 0,
         image_url: '', 
-        brewery: {}
+        brewery: {},
+        reviews: [],
+        productRating: 0
     }
 
     componentDidMount(){
@@ -45,9 +47,22 @@ export default class ProductPage extends React.Component {
         }
     }
 
+    reviewButton = () => {
+        if (this.props.user.products.map(product => product.id).includes(this.state.id)) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    reviewClick = () => {
+        this.props.history.push(`/reviews/${this.state.id}`)
+    }
+
     render() {
+        console.log(this.state.productRating)
         const { name, description, abv, volume, style, packaging, price, image_url, brewery} = this.state
-        return (
+        if ( this.state.id) return (
             <React.Fragment>
                 <Card fluid>
                     <Grid>
@@ -85,6 +100,9 @@ export default class ProductPage extends React.Component {
                                         <List.Item style={{lineHeight: '2'}}>
                                             <strong>Price: </strong> £{price.toFixed(2)}
                                         </List.Item>
+                                        <List.Item style={{lineHeight: '2'}}>
+                                            <strong>Rating: </strong> <Rating icon="star" rating={this.state.productRating} maxRating={5} disabled />
+                                        </List.Item>
                                     </List>
                                 </Card.Content>
                             </Grid.Column>
@@ -92,10 +110,39 @@ export default class ProductPage extends React.Component {
                     </Grid>
                     <Card.Content extra>
                         <Button positive floated={'right'} onClick={this.handleAddToCart}>Add to Cart</Button>
+                        {this.reviewButton() && <Button positive floated={'right'} onClick={this.reviewClick}>Review</Button>}
                     </Card.Content>
                 </Card>
-                <CardBar title={`More from ${brewery.name}`} products={this.moreProducts().slice(0,5)} fetchProduct={this.fetchProduct} />
+                <Grid>
+                    <Grid.Column width={10}>
+                        <CardBar title={`More from ${brewery.name}`} products={this.moreProducts().slice(0,3)} fetchProduct={this.fetchProduct} perRow={3} />
+                    </Grid.Column>
+                    <Grid.Column width={6}>
+                        <Header>Reviews</Header>
+                        <Segment>
+                            <Item.Group>
+                                {this.state.reviews.length > 0 ? 
+                                    this.state.reviews.map(review => {
+                                        return (
+                                            <Item key={review.id}>
+                                                <Item.Image size='tiny' src={this.state.image_url} />
+                                                <Item.Content>
+                                                    <Item.Header><Rating icon="star" defaultRating={review.rating} maxRating={5} disabled /></Item.Header>
+                                                    <Item.Meta>{review.reviewer}</Item.Meta>
+                                                    <Item.Description>{review.comment}</Item.Description>
+                                                </Item.Content>
+                                            </Item>
+                                        )
+                                    })
+                                    :
+                                    'No reviews yet.'
+                                }
+                            </Item.Group>
+                        </Segment>
+                    </Grid.Column>
+                </Grid>
             </React.Fragment>
         )
+        return <div></div>
     }
 }
