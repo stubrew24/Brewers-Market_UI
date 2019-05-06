@@ -10,6 +10,13 @@ class CheckoutForm extends React.Component {
         super(props)
         this.state = {complete: false, data: {}, btnText: 'Complete', btnDisable: false}
         this.submit = this.submit.bind(this)
+        this.order_id()
+    }
+
+    order_id(){
+        fetch(API_BASE + 'ordernum')
+            .then(resp=> resp.json())
+            .then(response => this.setState({order_id: response.order}))
     }
 
     async submit (ev) {
@@ -24,10 +31,10 @@ class CheckoutForm extends React.Component {
     
         let {token} = await this.props.stripe.createToken({name: "Name"});
 
-        let response = await fetch("/charge", {
+        let response = await fetch(API_BASE + "/charges", {
           method: "POST",
-          headers: {"Content-Type": "text/plain"},
-          body: token.id
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({email: this.props.user.email, card_token: token.id, total: this.props.total*100, order_id: this.state.order_id})
         });
     
         if (response.ok){

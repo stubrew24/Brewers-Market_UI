@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Button, Header, Modal, Card, Icon } from 'semantic-ui-react'
+import { Table, Button, Header, Modal, Card, Icon, Message } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import Checkout from './Checkout';
 import {API_BASE} from '../API'
@@ -69,11 +69,19 @@ export default class Cart extends React.Component {
        this.cartToState()
     }
 
+    validateAddress = () => {
+        if (!this.props.user.address_line_1 || !this.props.user.city || !this.props.user.postcode) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     render() {
         if (this.state.cartItems.length > 0) return (
             <React.Fragment>
                 <Header textAlign={'center'} size={'huge'}>My Cart</Header>
-                <Table singleLine striped fixed>
+                <Table singleLine striped fixed className={this.validateAddress ? 'attached' : null}>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Item</Table.HeaderCell>
@@ -114,9 +122,14 @@ export default class Cart extends React.Component {
                     <Table.Footer fullWidth>
                         <Table.Row>
                             <Table.HeaderCell colSpan='4'>
-                                <Modal trigger={<Button positive floated={'right'} style={{height:'2.8em'}}>Checkout</Button>}>
+                                    <Modal trigger={<Button positive floated={'right'} style={{height:'2.8em'}} disabled={this.validateAddress()} >Checkout</Button>}>
                                     <Modal.Header>Complete Purchase</Modal.Header>
                                     <Modal.Content>
+                                        <Message warning>
+                                            <Message.Header>Stripe Test Mode</Message.Header>
+                                            <p>Please use test card data<br />
+                                            Card number: <strong>4242 4242 4242 4242</strong></p>
+                                        </Message>
                                         <Checkout cart={this.state.cartItems} clearCart={this.props.clearCart} user={this.props.user} history={this.props.history} total={this.sumTotal(6.99)}/>
                                     </Modal.Content>
                                 </Modal>
@@ -126,6 +139,9 @@ export default class Cart extends React.Component {
                         </Table.Row>
                     </Table.Footer>
                 </Table>
+                {   this.validateAddress() &&
+                    <Message warning  attached='bottom' style={{textAlign:'right'}}>Address information is required to complete purchase.</Message>
+                }
 
             </React.Fragment>
         ) 

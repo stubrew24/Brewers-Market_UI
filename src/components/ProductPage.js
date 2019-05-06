@@ -2,7 +2,8 @@ import React from 'react'
 import { Card, Button, Image, Grid, List, Header, Segment, Item, Rating } from 'semantic-ui-react'
 import CardBar from './CardBar'
 import { API_BASE } from '../API';
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify'
+import { Link } from 'react-router-dom'
 
 export default class ProductPage extends React.Component {
 
@@ -76,7 +77,7 @@ export default class ProductPage extends React.Component {
                                 <Card.Description style={{padding:'1em'}}>
                                     <div>
                                         <Header>
-                                            {brewery.name}
+                                            <Link to={`/brewery/${brewery.id}`}>{brewery.name}</Link>
                                         </Header>
                                     {brewery.location}
                                     </div>
