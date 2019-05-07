@@ -53,6 +53,7 @@ class CheckoutForm extends React.Component {
                         } else {
                             localStorage.removeItem('cart')
                             this.props.clearCart()
+                            this.props.refreshData()
                             this.props.history.push(`/order/${response.id}`)
                         }   
                     })

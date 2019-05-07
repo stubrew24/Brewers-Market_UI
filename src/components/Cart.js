@@ -130,7 +130,7 @@ export default class Cart extends React.Component {
                                             <p>Please use test card data<br />
                                             Card number: <strong>4242 4242 4242 4242</strong></p>
                                         </Message>
-                                        <Checkout cart={this.state.cartItems} clearCart={this.props.clearCart} user={this.props.user} history={this.props.history} total={this.sumTotal(6.99)}/>
+                                        <Checkout cart={this.state.cartItems} clearCart={this.props.clearCart} user={this.props.user} history={this.props.history} total={this.sumTotal(6.99)} refreshData={this.props.refreshData} />
                                     </Modal.Content>
                                 </Modal>
 

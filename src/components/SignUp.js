@@ -14,6 +14,15 @@ export default class SignUp extends React.Component {
         password: '',
         password_confirm: ''
     }
+    
+    componentDidMount(){
+      this.background()
+    }
+
+    background(){
+      document.body.style.background = "url('https://res.cloudinary.com/dm7moiolo/image/upload/v1557234055/wil-stewart-24562-unsplash.jpg')";
+      document.body.style.backgroundSize = "100%";
+    }
 
     handleOnChange = e => {
         this.setState({

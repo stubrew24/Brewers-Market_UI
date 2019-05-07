@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Button, Image, Grid, List, Header, Segment, Item, Rating } from 'semantic-ui-react'
+import { Card, Button, Image, Grid, List, Header, Segment, Item, Rating, Pagination } from 'semantic-ui-react'
 import CardBar from './CardBar'
 import { API_BASE } from '../API';
 import { toast } from 'react-toastify'
@@ -24,13 +24,14 @@ export default class ProductPage extends React.Component {
     }
 
     componentDidMount(){
+        console.log('hello world')
         this.fetchProduct(this.props.match.params.id)
     }
 
     fetchProduct = (id) => {
         fetch(API_BASE + `products/${id}`)
             .then(resp => resp.json())
-            .then(product => this.setState({...product}))
+            .then(product => this.setState({...product, activePage: 1}))
     }
 
     moreProducts = () => {
@@ -49,7 +50,8 @@ export default class ProductPage extends React.Component {
     }
 
     reviewButton = () => {
-        if (this.props.user.products.map(product => product.id).includes(this.state.id)) {
+        const reviews = this.props.user.reviews.map(review => review.product_id)
+        if (this.props.user.products.includes(this.state.id) && !reviews.includes(this.state.id)) {
             return true
         } else {
             return false
@@ -60,8 +62,16 @@ export default class ProductPage extends React.Component {
         this.props.history.push(`/reviews/${this.state.id}`)
     }
 
+    paginationClick = (e, data) => {
+        this.setState({activePage: data.activePage})
+    }
+
+    displayReviews = () => {
+        const ap = this.state.activePage * 5
+        return this.state.reviews.slice(ap-5, ap)
+    }
+
     render() {
-        console.log(this.state.productRating)
         const { name, description, abv, volume, style, packaging, price, image_url, brewery} = this.state
         if ( this.state.id) return (
             <React.Fragment>
@@ -102,7 +112,7 @@ export default class ProductPage extends React.Component {
                                             <strong>Price: </strong> £{price.toFixed(2)}
                                         </List.Item>
                                         <List.Item style={{lineHeight: '2'}}>
-                                            <strong>Rating: </strong> <Rating icon="star" rating={this.state.productRating} maxRating={5} disabled />
+                                            <strong>Rating: </strong> <Rating icon="star" rating={Math.round(this.state.weightedRating)} maxRating={5} disabled />
                                         </List.Item>
                                     </List>
                                 </Card.Content>
@@ -123,13 +133,14 @@ export default class ProductPage extends React.Component {
                         <Segment>
                             <Item.Group>
                                 {this.state.reviews.length > 0 ? 
-                                    this.state.reviews.map(review => {
+                                    this.displayReviews().map(review => {
                                         return (
                                             <Item key={review.id}>
                                                 <Item.Image size='tiny' src={this.state.image_url} />
                                                 <Item.Content>
                                                     <Item.Header><Rating icon="star" defaultRating={review.rating} maxRating={5} disabled /></Item.Header>
                                                     <Item.Meta>{review.reviewer}</Item.Meta>
+                                                     <Item.Meta style={{fontSize:'0.7em'}}>{review.date}</Item.Meta>
                                                     <Item.Description>{review.comment}</Item.Description>
                                                 </Item.Content>
                                             </Item>
@@ -139,6 +150,16 @@ export default class ProductPage extends React.Component {
                                     'No reviews yet.'
                                 }
                             </Item.Group>
+                            <Pagination 
+                                fluid 
+                                defaultActivePage={1}
+                                firstItem={null}
+                                lastItem={null}
+                                pointing
+                                secondary
+                                onPageChange={this.paginationClick}
+                                totalPages={Math.ceil(this.state.reviews.length / 5)} 
+                            />
                         </Segment>
                     </Grid.Column>
                 </Grid>

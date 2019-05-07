@@ -14,7 +14,7 @@ export default class NavBar extends React.Component {
         const user = this.props.user
         return (
             <Menu fixed="top" color={'blue'} >
-                <Menu.Item header as={Link} to={'/'} className={'borderless'}>
+                <Menu.Item header as={Link} to={'/'} className={'borderless'} onClick={() => window.scrollTo(0, 0)}>
                     Brewers Market
                 </Menu.Item>
 

@@ -6,6 +6,23 @@ import NewsFeed from '../components/NewsFeed';
 
 export default class Landing extends React.Component {
 
+  componentDidMount(){
+    this.background()
+  }
+
+  background(){
+      document.body.style.background = "#C6FFDD"
+      document.body.style.background = "-webkit-linear-gradient(to right, #f7797d, #FBD786, #C6FFDD)"
+      document.body.style.background = "linear-gradient(to right, #f7797d, #FBD786, #C6FFDD)"
+  }
+  topRated = () => {
+    return this.props.products.sort((a,b) => b.weightedRating - a.weightedRating)
+  }
+
+  trending = () => {
+    return this.props.products.filter(product => product.trending.slice(0,4).includes(product.id))
+  }
+
   render(){
     return (
         <React.Fragment>
@@ -20,9 +37,9 @@ export default class Landing extends React.Component {
                   :
                     <React.Fragment>
                       <Grid.Column width={11}>
-                        <CardBar title="Trending" products={this.props.products.slice(0,4)} fetchProduct={()=>{}} perRow={4}  />
+                        <CardBar title="Trending" products={this.trending()} fetchProduct={()=>{}} perRow={4}  />
                         <CardBar title="Latest" products={[...this.props.products].reverse().slice(0,4)} fetchProduct={()=>{}} perRow={4}  />
-                        <CardBar title="Top Rated" products={[...this.props.products].reverse().slice(4,8)} fetchProduct={()=>{}} perRow={4}  />
+                        <CardBar title="Top Rated" products={this.topRated().slice(0,4)} fetchProduct={()=>{}} perRow={4}  />
                       </Grid.Column>
                       <Grid.Column width={5}>
                         <Header>Brewery Updates</Header>

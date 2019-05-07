@@ -10,7 +10,7 @@ import Products from './containers/Products'
 import ProductPage from './components/ProductPage'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import { API_BASE } from './API'
 import Cart from './components/Cart'
 import Order from './components/Order'
@@ -40,7 +40,6 @@ export default class App extends React.Component {
     this.getUser()
     this.getCart()
     this.getProducts()
-
   }
 
   getCart = () => {
@@ -58,6 +57,11 @@ export default class App extends React.Component {
         const instock = products.filter(product => product.stock > 0)
         this.setState({products: instock})
       })
+  }
+
+  refreshData = () => {
+    this.getUser()
+    this.getProducts()
   }
 
   clearCart = () => {
@@ -131,7 +135,8 @@ export default class App extends React.Component {
   }
 
   products = () => {
-    const {products, filter} = this.state
+    const products = [...this.state.products]
+    const { filter } = this.state
 
     switch(filter.type){
       case 'search':
@@ -160,8 +165,7 @@ export default class App extends React.Component {
 
           <NavBar user={this.state.user} signOut={this.signOut} setSearch={this.setSearch} search={this.state.filter.type === 'search' ? this.state.filter.value : ''} cart={this.state.cart} />
           
-          {
-            this.state.user ?
+          { this.state.user ?
             <Container style={{ paddingTop: '6em' }}>
               <Route exact path="/" render={ () => <Landing products={this.products()} filter={this.state.filter} setFilter={this.setFilter} user={this.state.user} />} />
               <Route exact path="/profile" render={ routerProps => <UserProfile {...routerProps} getUser={this.getUser} />} />
@@ -169,9 +173,9 @@ export default class App extends React.Component {
               <Route exact path="/order/:id" render={ routerProps => <Order {...routerProps} />} />
               <Route exact path="/products" render={ routerProps => <Products {...routerProps} />} />
               <Route exact path="/product/:id" render={ routerProps => <ProductPage {...routerProps} products={this.state.products} addToCart={this.addToCart} cart={this.state.cart} user={this.state.user} getUser={this.getProducts} />} />
-              <Route exact path="/cart" render={ routerProps => <Cart {...routerProps} user={this.state.user} cart={this.state.cart } products={this.products()} clearCart={this.clearCart} removeFromCart={this.removeFromCart} addToCart={this.addToCart} removeLineFromCart={this.removeLineFromCart} />} />
+              <Route exact path="/cart" render={ routerProps => <Cart {...routerProps} user={this.state.user} cart={this.state.cart } products={this.products()} clearCart={this.clearCart} removeFromCart={this.removeFromCart} addToCart={this.addToCart} removeLineFromCart={this.removeLineFromCart} refreshData={this.refreshData} />} />
               <Route exact path='/help' render={ routerProps => <Help {...routerProps} /> } />
-              <Route exact path='/reviews/:id' render={ routerProps => <Review {...routerProps} user={this.state.user}/> } />
+              <Route exact path='/reviews/:id' render={ routerProps => <Review {...routerProps} user={this.state.user} refreshData={this.refreshData}  /> } />
               <Route exact path='/brewery/:id' render={ routerProps => <Brewery {...routerProps} user={this.state.user} getUser={this.getUser} products={this.state.products} /> } />
               {
                 this.state.user.brewery &&
@@ -181,14 +185,15 @@ export default class App extends React.Component {
                   <Route exact path="/brewery/newproduct" render={ routerProps => <BreweryNewProduct {...routerProps} brewery={this.state.user.brewery} getUser={this.getProducts} />} />
                   <Route exact path="/brewery/products/:id" render={ routerProps => <BreweryProduct {...routerProps} getUser={this.getProducts} />} />
                 </React.Fragment>
-              
               }
             </Container>
             :
             <Container style={{ paddingTop: '6em' }}>
-              <Route exact path="/signup" render={ routerProps => <SignUp getUser={this.getUser} {...routerProps} />} />
+              <Route exact path="/" render={ routerProps => <SignIn getUser={this.getUser} {...routerProps} />} />
               <Route exact path="/signin" render={ routerProps => <SignIn getUser={this.getUser} {...routerProps} />} />
+              <Route exact path="/signup" render={ routerProps => <SignUp getUser={this.getUser} {...routerProps} />} />
             </Container>
+
           }
           
         </React.Fragment>
