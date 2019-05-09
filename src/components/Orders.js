@@ -10,13 +10,15 @@ export default class Orders extends React.Component {
     }
 
     componentDidMount(){
+        if (this.props.user){
         fetch(API_BASE + `users/${this.props.user.id}`)
             .then(resp => resp.json())
             .then(response => this.setState({orders: response.orders}))
+        }
     }
 
     render(){
-        return(
+        if (this.props.user) return(
 
             <React.Fragment>
                 <Header textAlign='center' size='huge'>My Orders</Header>
@@ -34,7 +36,7 @@ export default class Orders extends React.Component {
                     {
                         this.state.orders.map(order => {
                             return (
-                                <Table.Row>
+                                <Table.Row key={order.id}>
                                     <Table.Cell>{`${order.created_at.slice(8,10)}/${order.created_at.slice(5,7)}/${order.created_at.slice(0,4)}`}</Table.Cell>
                                     <Table.Cell>{order.id}</Table.Cell>
                                     <Table.Cell>£{order.total.toFixed(2)}</Table.Cell>
@@ -48,5 +50,6 @@ export default class Orders extends React.Component {
                 </Table>
             </React.Fragment>
         )
+        return <div />
     }
 }

@@ -3,10 +3,19 @@ import Hero from '../components/Hero'
 import CardBar from '../components/CardBar'
 import { Grid, Header } from 'semantic-ui-react';
 import NewsFeed from '../components/NewsFeed';
+import NewPostForm from '../components/NewPostForm';
 
 export default class Landing extends React.Component {
 
+  state = {
+  }
+
+  landingRefresh = () => {
+    this.setState({one:'one'})
+  }
+
   componentDidMount(){
+    this.props.setFilter(null,null)
     this.background()
   }
 
@@ -24,7 +33,7 @@ export default class Landing extends React.Component {
   }
 
   render(){
-    return (
+    if (this.props.user) return (
         <React.Fragment>
           <Hero setFilter={this.props.setFilter} /> <br />
             <Grid>
@@ -36,19 +45,28 @@ export default class Landing extends React.Component {
                     </Grid.Column>
                   :
                     <React.Fragment>
-                      <Grid.Column width={11}>
-                        <CardBar title="Trending" products={this.trending()} fetchProduct={()=>{}} perRow={4}  />
-                        <CardBar title="Latest" products={[...this.props.products].reverse().slice(0,4)} fetchProduct={()=>{}} perRow={4}  />
+                      <Grid.Column width={10}>
                         <CardBar title="Top Rated" products={this.topRated().slice(0,4)} fetchProduct={()=>{}} perRow={4}  />
+                        <CardBar title="Latest" products={[...this.props.products].reverse().slice(0,4)} fetchProduct={()=>{}} perRow={4}  />
+                        <CardBar title="Trending" products={this.trending()} fetchProduct={()=>{}} perRow={4}  />
                       </Grid.Column>
-                      <Grid.Column width={5}>
-                        <Header>Brewery Updates</Header>
-                        <NewsFeed user={this.props.user} limit={10} />
+                      <Grid.Column width={6}>
+                        <Header>{this.props.user.brewery ? 'New Post' : 'Brewery Updates'}</Header>
+                        {
+                          this.props.user.brewery ?
+                            <React.Fragment>
+                              <NewPostForm brewery={this.props.user.brewery.id} refreshData={this.landingRefresh}/>
+                              <NewsFeed user={this.props.user} brewery={this.props.user.brewery.id}/> 
+                            </React.Fragment>
+                          :
+                            <NewsFeed user={this.props.user} /> 
+                        }
                       </Grid.Column>
                     </React.Fragment>
                 }
             </Grid>
         </React.Fragment>
     )
+    return <div />
   }
 }

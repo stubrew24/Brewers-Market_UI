@@ -56,7 +56,6 @@ export default class Cart extends React.Component {
             const product = this.state.products.find(product => {
                return product.id === id
             })
-            console.log(this.props.cart[id], product.stock)
             if (this.props.cart[id] < product.stock) {
                 this.props.addToCart(id)
             } else {
@@ -78,7 +77,7 @@ export default class Cart extends React.Component {
     }
 
     render() {
-        if (this.state.cartItems.length > 0) return (
+        if (this.state.cartItems.length > 0 && this.props.user) return (
             <React.Fragment>
                 <Header textAlign={'center'} size={'huge'}>My Cart</Header>
                 <Table singleLine striped fixed className={this.validateAddress ? 'attached' : null}>
@@ -145,7 +144,7 @@ export default class Cart extends React.Component {
 
             </React.Fragment>
         ) 
-        if (this.state.cartItems.length < 1) return (
+        if (this.props.user) return (
             <React.Fragment>
                 <Header textAlign={'center'} size={'huge'}>My Cart</Header>
 
@@ -159,5 +158,6 @@ export default class Cart extends React.Component {
                 </Card>
             </React.Fragment>
         )
+        return <div />
     }
 }

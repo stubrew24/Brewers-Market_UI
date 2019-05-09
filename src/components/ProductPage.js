@@ -24,7 +24,6 @@ export default class ProductPage extends React.Component {
     }
 
     componentDidMount(){
-        console.log('hello world')
         this.fetchProduct(this.props.match.params.id)
     }
 
@@ -73,7 +72,7 @@ export default class ProductPage extends React.Component {
 
     render() {
         const { name, description, abv, volume, style, packaging, price, image_url, brewery} = this.state
-        if ( this.state.id) return (
+        if ( this.state.id && this.props.user ) return (
             <React.Fragment>
                 <Card fluid>
                     <Grid>
@@ -119,10 +118,13 @@ export default class ProductPage extends React.Component {
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
-                    <Card.Content extra>
-                        <Button positive floated={'right'} onClick={this.handleAddToCart}>Add to Cart</Button>
-                        {this.reviewButton() && <Button positive floated={'right'} onClick={this.reviewClick}>Review</Button>}
-                    </Card.Content>
+                    { 
+                        !this.props.user.brewery &&
+                        <Card.Content extra>
+                            <Button positive floated={'right'} onClick={this.handleAddToCart}>Add to Cart</Button>
+                            {this.reviewButton() && <Button positive floated={'right'} onClick={this.reviewClick}>Review</Button>}
+                        </Card.Content>
+                    }
                 </Card>
                 <Grid>
                     <Grid.Column width={10}>

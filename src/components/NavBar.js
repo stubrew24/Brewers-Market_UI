@@ -5,9 +5,16 @@ import { Link } from 'react-router-dom'
 export default class NavBar extends React.Component {
 
     validateAddress = () => {
-        if (!this.props.user.address_line_1 || !this.props.user.city || !this.props.user.postcode) {
+        if ((!this.props.user.address_line_1 || !this.props.user.city || !this.props.user.postcode) && !this.props.user.brewery) {
             return <Message error as={Link} to={'/profile'}>Please complete address information</Message>
         }
+    }
+
+    search = e => {
+        if (this.props.location.pathname != '/'){
+            this.props.history.push('/')
+        }
+        this.props.setSearch(e)
     }
 
     render() {
@@ -26,15 +33,11 @@ export default class NavBar extends React.Component {
                                     {this.validateAddress()}
                                 </Menu.Item>
                                 <Menu.Item>
-                                    <Input placeholder="Search..." action={{ icon: 'search' }} value={this.props.search} onChange={this.props.setSearch} />
-                                </Menu.Item>
-                                
-                                <Menu.Item as={Link} to={'/cart'} >
-                                    <Icon name='cart' /><strong>{Object.keys(this.props.cart).length}</strong>
+                                    <Input placeholder="Search..." action={{ icon: 'search' }} value={this.props.search} onChange={e => this.search(e)} />
                                 </Menu.Item>
 
                                 {
-                                    user.brewery && 
+                                user.brewery ?
                                         <Dropdown 
                                         item 
                                         icon={<Image src={user.brewery.profile_img} avatar style={{marginLeft:'1em'}}/>}
@@ -47,20 +50,26 @@ export default class NavBar extends React.Component {
                                             <Dropdown.Item onClick={this.props.signOut} as={Link} to={'/'} >Sign Out</Dropdown.Item>
                                         </Dropdown.Menu>
                                     </Dropdown>
+                                :
+
+                                    <React.Fragment>
+                                        <Menu.Item as={Link} to={'/cart'} >
+                                            <Icon name='cart' /><strong>{Object.keys(this.props.cart).length}</strong>
+                                        </Menu.Item>
+                                        <Dropdown 
+                                            item 
+                                            icon={<Image src={user.profile_img} avatar style={{marginLeft:'1em'}}/>}
+                                            text={`${user.first_name} ${user.last_name}`} 
+                                            >
+                                            <Dropdown.Menu>
+                                                <Dropdown.Item as={Link} to={'/profile'} >My Details</Dropdown.Item>
+                                                <Dropdown.Item as={Link} to={'/orders'}>Orders</Dropdown.Item>
+                                                <Dropdown.Item as={Link} to={'/help'}>Help</Dropdown.Item>
+                                                <Dropdown.Item onClick={this.props.signOut} as={Link} to={'/'} >Sign Out</Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    </React.Fragment>
                                 }
-                                
-                                <Dropdown 
-                                    item 
-                                    icon={<Image src={user.profile_img} avatar style={{marginLeft:'1em'}}/>}
-                                    text={`${user.first_name} ${user.last_name}`} 
-                                    >
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item as={Link} to={'/profile'} >My Details</Dropdown.Item>
-                                        <Dropdown.Item as={Link} to={'/orders'}>Orders</Dropdown.Item>
-                                        <Dropdown.Item as={Link} to={'/help'}>Help</Dropdown.Item>
-                                        <Dropdown.Item onClick={this.props.signOut} as={Link} to={'/'} >Sign Out</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
                             </Menu.Menu> 
                         :
                             <Menu.Menu position="right">
