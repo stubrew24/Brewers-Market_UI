@@ -82,7 +82,9 @@ export default class App extends React.Component {
         headers: {'Authorization':token}
       }).then(resp => resp.json())
         .then(response => {
-          if (response.error) return
+          if (response.error) {
+            localStorage.clear()
+          }
           this.setState({user: response.user, brewery: response.user.brewery, loggedIn: true})
         })
     }

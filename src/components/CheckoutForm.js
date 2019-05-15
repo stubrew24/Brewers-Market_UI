@@ -31,7 +31,7 @@ class CheckoutForm extends React.Component {
     
         let {token} = await this.props.stripe.createToken({name: "Name"});
 
-        let response = await fetch(API_BASE + "/charges", {
+        let response = await fetch(API_BASE + "charges", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify({email: this.props.user.email, card_token: token.id, total: this.props.total*100, order_id: this.state.order_id})
