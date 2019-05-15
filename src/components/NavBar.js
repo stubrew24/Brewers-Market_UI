@@ -11,7 +11,7 @@ export default class NavBar extends React.Component {
     }
 
     search = e => {
-        if (this.props.location.pathname != '/'){
+        if (this.props.location.pathname !== '/'){
             this.props.history.push('/')
         }
         this.props.setSearch(e)

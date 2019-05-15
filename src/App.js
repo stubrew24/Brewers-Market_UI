@@ -10,7 +10,7 @@ import Products from './containers/Products'
 import ProductPage from './components/ProductPage'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { API_BASE } from './API'
 import Cart from './components/Cart'
 import Order from './components/Order'

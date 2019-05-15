@@ -1,7 +1,11 @@
 {
-  "name": "mod-5-frontend",
+  "name": "brewers-market",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "11.1.0",
+    "yarn": "1.13.0"
+  },
   "dependencies": {
     "body-parser": "^1.19.0",
     "eslint-loader": "^2.1.2",
@@ -55,6 +59,5 @@
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.30.0"
-  },
-  "proxy": "http://localhost:9000"
+  }
 }
