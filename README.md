@@ -11,7 +11,7 @@ A market place for buying/selling small batch beers. Breweries can list products
 
 ## Author
 
-* **Stuart Sewell** - *Initial work* - (https://github.com/stubrew24)
+* **Stuart Sewell** - *Initial work* - https://github.com/stubrew24
 
 ## License
 
