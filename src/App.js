@@ -1,27 +1,31 @@
 import React from 'react';
-import './App.css';
-import NavBar from './components/NavBar'
-import { Container } from 'semantic-ui-react'
-import Landing from './containers/Landing'
-import SignIn from './containers/SignIn'
-import SignUp from './components/SignUp'
-import UserProfile from './components/UserProfile'
-import Products from './containers/Products'
-import ProductPage from './components/ProductPage'
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+import { Container } from 'semantic-ui-react'
+
+import 'react-toastify/dist/ReactToastify.css';
+import './App.css';
+
 import { API_BASE } from './API'
-import Cart from './components/Cart'
-import Order from './components/Order'
-import Orders from './components/Orders'
-import BreweryProfile from './components/BreweryProfile'
+
+import Landing from './containers/Landing'
+import Products from './containers/Products'
+import SignIn from './containers/SignIn'
+
+import Brewery from './components/Brewery'
+import BreweryNewProduct from './components/BreweryNewProduct'
 import BreweryProduct from './components/BreweryProduct'
 import BreweryProducts from './components/BreweryProducts'
-import BreweryNewProduct from './components/BreweryNewProduct'
+import BreweryProfile from './components/BreweryProfile'
+import Cart from './components/Cart'
 import Help from './components/Help'
+import NavBar from './components/NavBar'
+import Order from './components/Order'
+import Orders from './components/Orders'
+import ProductPage from './components/ProductPage'
 import Review from './components/Review'
-import Brewery from './components/Brewery'
+import SignUp from './components/SignUp'
+import UserProfile from './components/UserProfile'
 
 export default class App extends React.Component {
 
